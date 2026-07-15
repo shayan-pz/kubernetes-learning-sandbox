@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: report-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: report
+        image: python:3.11
+        command:
+          - python
+          - -c
+          - |
+            print("Generating report...")
+            print("Report completed!")
+      restartPolicy: Never
