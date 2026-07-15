@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: node-api
+  template:
+    metadata:
+      labels:
+        app: node-api
+    spec:
+      containers:
+        - name: node-api
+          image: aliparvizi832/node-api:v3
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PYTHON_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: node-config
+                  key: PYTHON_SERVICE_URL
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: node-secret
+                  key: API_KEY
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
